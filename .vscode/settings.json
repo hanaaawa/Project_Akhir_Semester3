@@ -1,0 +1,21 @@
+{
+    "java.project.sourcePaths": [
+        ".",
+        "lib",
+        "logo.png"
+    ],
+    "java.project.referencedLibraries": [
+        "c:\\javafx\\lib\\javafx.fxml.jar",
+        "c:\\javafx\\lib\\javafx.web.jar",
+        "c:\\javafx\\lib\\javafx.graphics.jar",
+        "c:\\javafx\\lib\\jfx.incubator.richtext.jar",
+        "c:\\javafx\\lib\\javafx.media.jar",
+        "c:\\javafx\\lib\\javafx.swing.jar",
+        "c:\\javafx\\lib\\javafx-swt.jar",
+        "c:\\Users\\Hp\\OneDrive\\ドキュメント\\Downloads\\Java\\Project_Akhir_Semester3\\lib\\postgresql-42.7.9.jar",
+        "c:\\javafx\\lib\\jfx.incubator.input.jar",
+        "c:\\javafx\\lib\\jdk.jsobject.jar",
+        "c:\\javafx\\lib\\javafx.base.jar",
+        "c:\\javafx\\lib\\javafx.controls.jar"
+    ]
+}

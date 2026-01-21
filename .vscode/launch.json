@@ -3,6 +3,27 @@
   "configurations": [
     {
       "type": "java",
+      "name": "TagihanListrikfx",
+      "request": "launch",
+      "mainClass": "src.TagihanListrikfx",
+      "projectName": "Project_Akhir_Semester3_a996b58b"
+    },
+    {
+      "type": "java",
+      "name": "TagihanListrikfx",
+      "request": "launch",
+      "mainClass": "TagihanListrikfx",
+      "projectName": "Project_Akhir_Semester3_a996b58b"
+    },
+    {
+      "type": "java",
+      "name": "TagihanListrikSwing",
+      "request": "launch",
+      "mainClass": "TagihanListrikSwing",
+      "projectName": "Project_Akhir_Semester3_a996b58b"
+    },
+    {
+      "type": "java",
       "name": "Run JavaFX",
       "request": "launch",
       "mainClass": "Project_Akhir_Semester3.TagihanListrikfx",

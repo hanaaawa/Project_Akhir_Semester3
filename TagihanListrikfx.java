@@ -1,180 +1,177 @@
-package Project_Akhir_Semester3; 
-
-// ===== SESI 13: JavaFX GUI =====
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.print.PrinterJob;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import javafx.stage.FileChooser;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import javafx.scene.image.Image;
-
-import java.io.File;
-import java.io.FileWriter;
 
 public class TagihanListrikfx extends Application {
 
-    private TextArea txtStruk;
+    private VBox invoiceBox;
 
     @Override
     public void start(Stage stage) {
 
-        // ====== TITLE ======
-        Label title = new Label("Aplikasi Tagihan Listrik");
-        title.setFont(Font.font("Arial", 22));
+        // ================= TITLE =================
+        Label title = new Label("APLIKASI TAGIHAN LISTRIK");
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 22));
+        title.setStyle("-fx-text-fill: white;");
 
-        // ====== INPUT ======
-        TextField txtId = new TextField();
-        TextField txtKwh = new TextField();
-        TextField txtTanggal = new TextField();
+        // ================= INPUT =================
+        TextField tfId = new TextField();
+        TextField tfKwh = new TextField();
+        TextField tfTanggal = new TextField();
 
-        ComboBox<String> cmbGolongan = new ComboBox<>();
-        cmbGolongan.getItems().addAll("Rumah Tangga", "Bisnis", "Industri");
-        cmbGolongan.getSelectionModel().selectFirst();
+        ComboBox<String> cbGolongan = new ComboBox<>();
+        cbGolongan.getItems().addAll("Rumah Tangga", "Bisnis", "Industri");
+        cbGolongan.setValue("Rumah Tangga");
 
         GridPane form = new GridPane();
-        form.setVgap(10);
         form.setHgap(10);
-        form.setAlignment(Pos.CENTER);
+        form.setVgap(10);
 
         form.add(new Label("ID Pelanggan"), 0, 0);
-        form.add(txtId, 1, 0);
-
-        form.add(new Label("Jumlah kWh"), 0, 1);
-        form.add(txtKwh, 1, 1);
-
+        form.add(tfId, 1, 0);
+        form.add(new Label("Pemakaian (kWh)"), 0, 1);
+        form.add(tfKwh, 1, 1);
         form.add(new Label("Golongan"), 0, 2);
-        form.add(cmbGolongan, 1, 2);
-
+        form.add(cbGolongan, 1, 2);
         form.add(new Label("Tanggal Bayar"), 0, 3);
-        form.add(txtTanggal, 1, 3);
+        form.add(tfTanggal, 1, 3);
 
-        // ====== BUTTON ======
+        // ================= BUTTON =================
         Button btnHitung = new Button("Hitung Tagihan");
-        Button btnCetak = new Button("Cetak Struk");
+        btnHitung.setStyle("""
+            -fx-background-color: #0000c8;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+        """);
 
-        btnHitung.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
-        btnCetak.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
+        Button btnPDF = new Button("Cetak / Simpan PDF");
+        btnPDF.setStyle("""
+            -fx-background-color: #24a729;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+        """);
 
-        HBox tombolBox = new HBox(10, btnHitung, btnCetak);
-        tombolBox.setAlignment(Pos.CENTER);
+        HBox tombol = new HBox(10, btnHitung, btnPDF);
+        tombol.setAlignment(Pos.CENTER);
 
-        // ====== OUTPUT ======
-        txtStruk = new TextArea();
-        txtStruk.setEditable(false);
-        txtStruk.setPrefHeight(250);
-        txtStruk.setFont(Font.font("Consolas", 13));
+        // ================= INVOICE =================
+        invoiceBox = new VBox(10);
+        invoiceBox.setPadding(new Insets(20));
+        invoiceBox.setStyle("""
+            -fx-background-color: white;
+            -fx-background-radius: 15;
+            -fx-border-radius: 15;
+            -fx-border-color: #000000;
+        """);
 
-        // ====== CARD LAYOUT ======
-        VBox card = new VBox(15, title, form, tombolBox, txtStruk);
+        // ================= CARD =================
+        VBox card = new VBox(20, title, form, tombol, invoiceBox);
         card.setPadding(new Insets(20));
-        card.setAlignment(Pos.CENTER);
-        card.setMaxWidth(420);
+        card.setMaxWidth(500);
         card.setStyle("""
-            -fx-background-color: #f9f9f9;
-            -fx-border-radius: 10;
-            -fx-background-radius: 10;
-            -fx-border-color: #cccccc;
+            -fx-background-color: #7c8be1;
+            -fx-background-radius: 20;
         """);
 
         StackPane root = new StackPane(card);
-        root.setStyle("-fx-background-color: #2c3e50;");
+        root.setStyle("-fx-background-color: #1f2a44;");
 
-        // ====== EVENT HITUNG ======
+        // ================= LOGIC =================
         btnHitung.setOnAction(e -> {
             try {
-                String id = txtId.getText();
-                double kwh = Double.parseDouble(txtKwh.getText());
-                int tanggal = Integer.parseInt(txtTanggal.getText());
-                String golongan = cmbGolongan.getValue();
+                String id = tfId.getText();
+                double kwh = Double.parseDouble(tfKwh.getText());
+                int tgl = Integer.parseInt(tfTanggal.getText());
+                String gol = cbGolongan.getValue();
 
                 TagihanListrik tagihan;
-
-                if (golongan.equals("Rumah Tangga")) {
+                if (gol.equals("Rumah Tangga")) {
                     tagihan = new TagihanListrik.RumahTangga(id, kwh);
-                } else if (golongan.equals("Bisnis")) {
+                } else if (gol.equals("Bisnis")) {
                     tagihan = new TagihanListrik.Bisnis(id, kwh);
                 } else {
                     tagihan = new TagihanListrik.Industri(id, kwh);
                 }
 
-                double sebelum = tagihan.getTotal();
-                tagihan.hitungDenda(tanggal);
-                double sesudah = tagihan.getTotal();
-                double denda = sesudah - sebelum;
+                double subtotal = tagihan.getTotal();
+                tagihan.hitungDenda(tgl);
+                double total = tagihan.getTotal();
+                double denda = total - subtotal;
 
-                String struk = """
-                        ========== STRUK PEMBAYARAN ==========
-                        ID Pelanggan : %s
-                        Golongan     : %s
-                        Pemakaian    : %.2f kWh
-                        ------------------------------------
-                        Subtotal     : Rp %.2f
-                        Denda        : Rp %.2f
-                        ------------------------------------
-                        TOTAL BAYAR  : Rp %.2f
-                        ====================================
-                        """.formatted(id, golongan, kwh, sebelum, denda, sesudah);
+                tagihan.simpanKeDatabase(gol, denda);
 
-                txtStruk.setText(struk);
-
-                // ========== TAMBAHAN DATABASE ==========
-                tagihan.simpanKeDatabase(golongan, denda);
+                buildInvoice(id, gol, kwh, subtotal, denda, total);
 
             } catch (Exception ex) {
-                showError("Input tidak valid!");
+                alert("Input tidak valid!");
             }
         });
 
-        // ====== EVENT CETAK ======
-        btnCetak.setOnAction(e -> {
-            if (txtStruk.getText().isEmpty()) {
-                showError("Hitung tagihan dulu!");
-                return;
-            }
-
-            FileChooser chooser = new FileChooser();
-            chooser.setTitle("Simpan Struk");
-            chooser.setInitialFileName("struk.txt");
-
-            File file = chooser.showSaveDialog(stage);
-
-            if (file != null) {
-                try (FileWriter fw = new FileWriter(file)) {
-                    fw.write(txtStruk.getText());
-                    showInfo("Struk berhasil disimpan!");
-                } catch (Exception ex) {
-                    showError("Gagal menyimpan file!");
-                }
+        btnPDF.setOnAction(e -> {
+            PrinterJob job = PrinterJob.createPrinterJob();
+            if (job != null && job.showPrintDialog(stage)) {
+                job.printPage(invoiceBox);
+                job.endJob();
             }
         });
 
-        // ====== STAGE ======
-        Scene scene = new Scene(root, 600, 600);
-
+        stage.setScene(new Scene(root, 650, 750));
         stage.setTitle("Tagihan Listrik - JavaFX");
-
-        // icon (opsional)
-        try {
-            stage.getIcons().add(new Image("file:icon.png"));
-        } catch (Exception ignored) {}
-
-        stage.setScene(scene);
-        stage.centerOnScreen();
         stage.show();
     }
 
-    private void showError(String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR);
-        a.setContentText(msg);
-        a.show();
+    // ================= INVOICE BUILDER =================
+    private void buildInvoice(String id, String gol, double kwh,
+                              double subtotal, double denda, double total) {
+
+        invoiceBox.getChildren().clear();
+
+        ImageView logo = new ImageView(new Image("file:logo.png"));
+        logo.setFitWidth(70);
+        logo.setPreserveRatio(true);
+
+        Label perusahaan = new Label("PT LISTRIK FARHANA");
+        perusahaan.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+
+        Label alamat = new Label("Jl. Bandung Raya No.123 Kota Bandung");
+
+        VBox header = new VBox(5, logo, perusahaan, alamat);
+        header.setAlignment(Pos.CENTER);
+
+        GridPane detail = new GridPane();
+        detail.setHgap(10);
+        detail.setVgap(8);
+
+        detail.addRow(0, new Label("ID Pelanggan"), new Label(": " + id));
+        detail.addRow(1, new Label("Golongan"), new Label(": " + gol));
+        detail.addRow(2, new Label("Pemakaian"), new Label(": " + kwh + " kWh"));
+        detail.addRow(3, new Label("Subtotal"), new Label(": Rp " + subtotal));
+        detail.addRow(4, new Label("Denda"), new Label(": Rp " + denda));
+
+        Label totalLbl = new Label("TOTAL BAYAR : Rp " + total);
+        totalLbl.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        totalLbl.setStyle("-fx-text-fill: #f70a0a;");
+
+        invoiceBox.getChildren().addAll(
+                header,
+                new Separator(),
+                detail,
+                new Separator(),
+                totalLbl,
+                new Label("Terima kasih telah melakukan pembayaran")
+        );
     }
 
-    private void showInfo(String msg) {
+    private void alert(String msg) {
         Alert a = new Alert(Alert.AlertType.INFORMATION);
         a.setContentText(msg);
         a.show();
